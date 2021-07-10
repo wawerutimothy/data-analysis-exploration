@@ -12,104 +12,202 @@ SELECT iso_code, location, continent,  new_cases, date, population FROM covid_de
 
 -- To find probability of death if one gets infected.
 SELECT iso_code, continent, date, location, total_cases, total_deaths, population, (total_deaths*100.0)/total_cases AS death_percentage 
-FROM covid_deaths WHERE location LIKE '%Kenya%' ;
-
--- Percentage of population infected.
-SELECT location, date, total_cases, population,(total_cases*100.0)/population AS Population_infectionrate 
-FROM covid_deaths WHERE location LIKE '%Kenya%' ;
-
--- sum of newcases by date in kenya
-SELECT Location, date, SUM(new_cases) AS new_caseskenya FROM covid_deaths
-WHERE Location LIKE '%Kenya%' Group BY date;
-
--- sum of new cases and new deaths by date
-SELECT location, date, SUM(new_cases) total_newcases, SUM(new_deaths) AS total_newdeaths
-FROM covid_deaths WHERE location LIKE '%Kenya%' GROUP BY date;
-
--- Probability of death based on sum
-SELECT location, date, SUM(new_cases) AS sum_newcases, SUM(CAST(new_deaths AS INT)) AS sum_newdeaths,
-SUM(CAST(new_deaths AS INT))*100.0/SUM(new_cases) AS total_deathrate
-FROM covid_deaths WHERE location LIKE '%Kenya%' GROUP BY date;
-
--- explore the the continent africa
-SELECT * FROM covid_deaths WHERE continent LIKE '%Africa%';
-
--- countries in africa with highestcasecount
-SELECT continent, location, MAX(CAST(total_cases AS INT)) AS highest_casecount 
-FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY highest_casecount desc;
-
--- countries in africa with highest deathtoll
-SELECT continent, location, MAX(CAST(total_deaths AS INT)) AS highest_deathcount 
-FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY highest_deathcount desc;
-
--- countries in africa lowest infectioncounts
-SELECT continent, date, location, MIN(total_cases) AS lowest_infectioncount FROM covid_deaths 
-WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY lowest_infectioncount; 
-
--- countries in africa with lowest deathtoll
-SELECT continent, date, location, MIN(total_deaths) AS lowest_deathtoll FROM covid_deaths 
-WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY lowest_deathtoll ; 
-
--- countries infection rate on Africacontinent
-SELECT location, date, total_cases, population, (total_cases*100.0)/population AS highestcountry_infectionrate 
-FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL;
-
--- country with highest infection rate.
-SELECT location MAX((total_cases*100.0))/population AS highestcountry_infectionrate 
-FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL;
-
--- country with lowest infection rate 
-SELECT location MIN((total_cases*100.0))/population AS highestcountry_infectionrate 
-FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL;
-
--- countries in africa with highestdeath count rate
-SELECT continent, location, MAX(CAST(total_deaths AS INT)) AS total_deathcount 
-FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY total_deathcount desc;
-
--- countries with highest infection in the world
-SELECT  Location, population, MAX(total_cases) AS highest_infectioncount, MAX((total_cases*100.0))/population
-AS population_infectedrate FROM covid_deaths 
-GROUP BY location ORDER BY population_infectedrate desc ;
-
--- contries with highest death count rate
-SELECT continent, location, MAX(CAST(total_deaths AS INT)) AS total_deathcount 
-FROM covid_deaths WHERE continent NOTNULL GROUP BY location ORDER BY total_deathcount desc;
-
--- highest deathtoll by continent
-SELECT continent, MAX(CAST(total_deaths AS INT)) AS total_deathcount 
-FROM covid_deaths WHERE continent NOTNULL GROUP BY continent ORDER BY total_deathcount;
-
--- highest deathtoll by countries in the world
-SELECT location, MAX(CAST(total_deaths AS INT)) AS total_deathcount 
-FROM covid_deaths WHERE continent NOTNULL GROUP BY location ORDER BY total_deathcount desc;
-
--- sum of newcases in the world by date
-SELECT date, SUM(new_cases) AS world_newcases FROM covid_deaths 
-WHERE continent NOTNULL AND new_cases NOTNULL GROUP BY date;
-
--- Let's join the two  table 
-SELECT * FROM covid_deaths dea JOIN covid_vaccination vac
-ON dea.location = vac.location
-AND dea.date = vac.date;
-
--- total population vs vaccinations.
-SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
-FROM covid_deaths dea JOIN covid_vaccination vac ON
-dea.location = dea.location AND vac.date = vac.date 
-WHERE dea.continent ORDER BY 1,2;
-
--- total population vs total vaccinations
-SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations,
-SUM(vac.new_vaccinations) OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date)
-AS people_consecutivevaccinated
-FROM covid_deaths dea JOIN covid_vaccination vac ON
-dea.location = dea.location AND vac.date = vac.date 
-WHERE dea.continent;
-
-
-
-
-
+FROM covid_deaths WHERE location LIKE '%Kenya%' ;
+
+
+
+-- Percentage of population infected.
+
+SELECT location, date, total_cases, population,(total_cases*100.0)/population AS Population_infectionrate 
+
+FROM covid_deaths WHERE location LIKE '%Kenya%';
+
+
+
+-- sum of newcases by date in kenya
+
+SELECT Location, date, SUM(new_cases) AS new_caseskenya FROM covid_deaths
+
+WHERE Location LIKE '%Kenya%' Group BY date;
+
+
+
+-- sum of new cases and new deaths by date
+
+SELECT location, date, SUM(new_cases) total_newcases, SUM(new_deaths) AS total_newdeaths
+
+FROM covid_deaths WHERE location LIKE '%Kenya%' GROUP BY date;
+
+
+
+-- Probability of death based on sum
+
+SELECT location, date, SUM(new_cases) AS sum_newcases, SUM(CAST(new_deaths AS INT)) AS sum_newdeaths,
+
+SUM(CAST(new_deaths AS INT))*100.0/SUM(new_cases) AS total_deathrate
+
+FROM covid_deaths WHERE location LIKE '%Kenya%' GROUP BY date;
+
+
+
+-- explore the the continent africa
+
+SELECT * FROM covid_deaths WHERE continent LIKE '%Africa%';
+
+
+
+-- countries in africa with highestcasecount
+
+SELECT continent, location, MAX(CAST(total_cases AS INT)) AS highest_casecount 
+
+FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY highest_casecount desc;
+
+
+
+-- countries in africa with highest deathtoll
+
+SELECT continent, location, MAX(CAST(total_deaths AS INT)) AS highest_deathcount 
+
+FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY highest_deathcount desc;
+
+
+
+-- countries in africa lowest infectioncounts
+
+SELECT continent, date, location, MIN(total_cases) AS lowest_infectioncount FROM covid_deaths 
+
+WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY lowest_infectioncount; 
+
+
+
+-- countries in africa with lowest deathtoll
+
+SELECT continent, date, location, MIN(total_deaths) AS lowest_deathtoll FROM covid_deaths 
+
+WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY lowest_deathtoll ; 
+
+
+
+-- countries infection rate on Africacontinent
+
+SELECT location, date, total_cases, population, (total_cases*100.0)/population AS highestcountry_infectionrate 
+
+FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL;
+
+
+
+-- country with highest infection rate.
+
+SELECT location MAX((total_cases*100.0))/population AS highestcountry_infectionrate 
+
+FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL;
+
+
+
+-- country with lowest infection rate 
+
+SELECT location MIN((total_cases*100.0))/population AS highestcountry_infectionrate 
+
+FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL;
+
+
+
+-- countries in africa with highestdeath count rate
+
+SELECT continent, location, MAX(CAST(total_deaths AS INT)) AS total_deathcount 
+
+FROM covid_deaths WHERE continent LIKE '%Africa%' AND continent NOTNULL GROUP BY location ORDER BY total_deathcount desc;
+
+
+
+-- countries with highest infection in the world
+
+SELECT  Location, population, MAX(total_cases) AS highest_infectioncount, MAX((total_cases*100.0))/population
+
+AS population_infectedrate FROM covid_deaths 
+
+GROUP BY location ORDER BY population_infectedrate desc ;
+
+
+
+-- contries with highest death count rate
+
+SELECT continent, location, MAX(CAST(total_deaths AS INT)) AS total_deathcount 
+
+FROM covid_deaths WHERE continent NOTNULL GROUP BY location ORDER BY total_deathcount desc;
+
+
+
+-- highest deathtoll by continent
+
+SELECT continent, MAX(CAST(total_deaths AS INT)) AS total_deathcount 
+
+FROM covid_deaths WHERE continent NOTNULL GROUP BY continent ORDER BY total_deathcount;
+
+
+
+-- highest deathtoll by countries in the world
+
+SELECT location, MAX(CAST(total_deaths AS INT)) AS total_deathcount 
+
+FROM covid_deaths WHERE continent NOTNULL GROUP BY location ORDER BY total_deathcount desc;
+
+
+
+-- sum of newcases in the world by date
+
+SELECT date, SUM(new_cases) AS world_newcases FROM covid_deaths 
+
+WHERE continent NOTNULL AND new_cases NOTNULL GROUP BY date;
+
+
+
+-- Let's join the two  table 
+
+SELECT * FROM covid_deaths dea JOIN covid_vaccination vac
+
+ON dea.location = vac.location
+
+AND dea.date = vac.date;
+
+
+
+-- total population vs vaccinations.
+
+SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
+
+FROM covid_deaths dea JOIN covid_vaccination vac ON
+
+dea.location = dea.location AND vac.date = vac.date 
+
+WHERE dea.continent ORDER BY 1,2;
+
+
+
+-- total population vs total vaccinations
+
+SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations,
+
+SUM(vac.new_vaccinations) OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date)
+
+AS people_consecutivevaccinated
+
+FROM covid_deaths dea JOIN covid_vaccination vac ON
+
+dea.location = dea.location AND vac.date = vac.date 
+
+WHERE dea.continent;
+
+
+
+
+
+
+
+
+
+
+
 
 
 
